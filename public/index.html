@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>TruePlan3Dvisualisation</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="http://cesiumjs.org/releases/1.44/Build/Cesium/Widgets/widgets.css">
+</head>
+
+<body>
+    <div id="cesiumContainer"></div>
+
+    <!-- main panel -->
+    <div class="panel-main">
+        <div class="logo-img-con">
+            <p><img src="./img/logo.svg" alt="logo" style="width:60px; height: 60px;">TruePlan 3D visualisation</p>
+        </div> 
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active">
+                <a data-toggle="tab" href="#upload">Step1: Upload OBJ Model</a>
+            </li>
+            <li role="presentation">
+                <a data-toggle="tab" href="#show">Step2: Show Model</a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div id="upload" class="tab-pane fade in active">
+                <form class="form-yc form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" for="inputFileObjModel">Choose Obj File: </label>
+                        <div class="col-sm-6">
+                            <input type="file" id="inputFileObjModel">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-4">
+                            <a id="btnUploadObj" class="btn btn-primary">Upload Obj</a>
+                        </div>
+                    </div>
+                </form>
+                <div id='divDownloadGltf' class="alert alert-sucess hidden">
+                    <p class="text-success">Convert Obj to Gltf Successfully!
+                        <a class="btn btn-success" href="/gltf"> DownLoad GLTF</a>
+                    </p>
+                    <p class="text-primary">Please Go Step2.</p>
+                </div>
+            </div>
+            <div id="show" class="tab-pane fade">
+                <form class="form-yc form-horizontal">
+                    <div class="form-group">
+                        <label for="inputLocation" class="col-sm-2 control-label">Location:</label>
+                        <div class="col-sm-3">
+                            <input type="number" class="form-control" id="inputLongitude" step=any placeholder="longitude eg: 112.2300" min="-180" max="180">
+                        </div>
+                        <div class="col-sm-3">
+                            <input type="number" class="form-control" id="inputLatitude" step=any placeholder="latitude eg: 23.2300" min="-90" max="90">
+                        </div>
+                        <div class="col-sm-3">
+                            <input type="number" class="form-control" id="inputHeight" step=any placeholder="height eg: 15.2">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputOrientation" class="col-sm-2 control-label">Orientation:</label>
+                        <div class="col-sm-3">
+                            <input type="number" class="form-control" id="inputRoll" step=any placeholder="x rotation">
+                        </div>
+                        <div class="col-sm-3">
+                            <input type="number" class="form-control" id="inputPitch" step=any placeholder="y rotation">
+                        </div>
+                        <div class="col-sm-3">
+                            <input type="number" class="form-control" id="inputHeading" step=any placeholder="z rotation">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputScale" class="col-sm-2 control-label">Scale:</label>
+                        <div class="col-sm-3">
+                            <input type="number" class="form-control" id="inputScale" step=any placeholder="model scale eg: 1.0" value="1.0" min="0.000000001" max="9999999">
+                        </div>
+                    </div>
+                    <input id="btnShowModel" class="btn btn-default btn-primary center-block" type="button" value="Show Model">
+                </form>
+
+                <!-- Button trigger modal -->
+                <a type="button" class="btn btn-link" data-toggle="modal" data-target="#myModal">
+                    <span class="glyphicon glyphicon-thumbs-up"></span> About Parameters
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- toolbox for cesium -->
+    <div class="toolbox btn-group dropup">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Toolbox
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a id='btnRemoveAll' href="#">Remove All Entities</a>
+            </li>
+            <li>
+                <a id='btnShowCamera' href="#">Show Camera Params</a>
+            </li>
+            <li role="separator" class="divider"></li>
+            <li>
+                <a href="#">todo</a>
+            </li>
+        </ul>
+    </div>
+
+
+    <!-- Modal -->
+    <!-- should be placed here, otherwise it may cause modal dlg could not be closed correctly.   -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Help</h4>
+                </div>
+                <div class="modal-body">
+                    <h4>
+                        1.set model location(longitude, latitude, height). Tip: You can click on globe to pick a position.
+                    </h4>
+                    <h4>
+                        2.set model orientation around x, y, z(use the <mark> north-east-up reference frame</mark>).
+                        <!-- <img src="img/HPR.png" alt="sketch of head pitch roll" class="img-thumbnail center-block">-->
+                    </h4>
+                    <h4>
+                        3.set the model scale, eg: 1.0;
+                    </h4>
+                    <!-- <h4 class="bg-primary">Parameters Table</h4>-->
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Longitude</th>
+                                <th>Latitude</th>
+                                <th>Height</th>
+                                <th>X Rotation</th>
+                                <th>Y Rotation</th>
+                                <th>Z Rotation</th>
+                                <th>Scale</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">Instruction</th>
+                                <td>use degree, range -180~180</td>
+                                <td>use degree, range -90~90</td>
+                                <td>float</td>
+                                <td>use degree, around x axis,anti-clockwise</td>
+                                <td>use degree, around y axis,anti-clockwise</td>
+                                <td>use degree, around z axis,anti-clockwise</td>
+                                <td>float</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Default Value</th>
+                                <td>114.178483</td>
+                                <td>22.302250</td>
+                                <td>13</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>1.0</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Example</th>
+                                <td>112.2300</td>
+                                <td>23.2300</td>
+                                <td>15.2</td>
+                                <td>90, rotate around x 90 degree</td>
+                                <td>-90, rotate around y 90 degree with clockwise</td>
+                                <td>90, rotate around z 90 degree</td>
+                                <td>1.5</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="http://cesiumjs.org/releases/1.44/Build/Cesium/Cesium.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
