@@ -8,7 +8,7 @@ view [OBJ](https://en.wikipedia.org/wiki/Wavefront_.obj_file) models correctly i
 # Install
 1.install the repo
 ```
-$ git clone https://github.com/YinChaoOnline/obj-cesium-viewer
+
 ```
 
 2.change to obj-cesium-viewer folder, install node packages
